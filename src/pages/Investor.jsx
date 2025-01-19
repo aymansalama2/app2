@@ -13,7 +13,8 @@ const Investor = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const chatContainerRef = useRef(null);
   const revenueChartRef = useRef(null);
-  const profitChartRef = useRef(null);
+  const expectedChartRef = useRef(null);
+  const lossMarginChartRef = useRef(null);
   const portfolioChartRef = useRef(null);
 
   // Données enrichies de l'entreprise
@@ -69,20 +70,20 @@ const Investor = () => {
 
   useEffect(() => {
     // Nettoyage des graphiques existants
-    const charts = [revenueChartRef, profitChartRef, portfolioChartRef];
+    const charts = [revenueChartRef, expectedChartRef, lossMarginChartRef, portfolioChartRef];
     charts.forEach(chart => {
       if (chart.current) {
         chart.current.destroy();
       }
     });
 
-    // Graphique des revenus et dépenses
+    // Graphique des revenus et dépenses sur les 5 dernières années
     const revenueCtx = document.getElementById("revenueChart")?.getContext("2d");
     if (revenueCtx) {
       revenueChartRef.current = new Chart(revenueCtx, {
         type: "line",
         data: {
-          labels: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin"],
+          labels: ["2018", "2019", "2020", "2021", "2022", "2023"],
           datasets: [
             {
               label: "Revenus",
@@ -108,7 +109,98 @@ const Investor = () => {
             legend: { position: "top" },
             title: {
               display: true,
-              text: "Revenus et Dépenses",
+              text: "Revenus et Dépenses (2018-2023)",
+              color: "white"
+            },
+          },
+          scales: {
+            y: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255,255,255,0.1)" }
+            },
+            x: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255,255,255,0.1)" }
+            }
+          }
+        },
+      });
+    }
+
+    // Graphique des revenus et dépenses attendus pour les 5 prochaines années
+    const expectedCtx = document.getElementById("expectedChart")?.getContext("2d");
+    if (expectedCtx) {
+      expectedChartRef.current = new Chart(expectedCtx, {
+        type: "line",
+        data: {
+          labels: ["2024", "2025", "2026", "2027", "2028"],
+          datasets: [
+            {
+              label: "Revenus Attendus",
+              data: [320000, 350000, 380000, 410000, 440000],
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderWidth: 2,
+              fill: true,
+            },
+            {
+              label: "Dépenses Attendues",
+              data: [230000, 250000, 270000, 290000, 310000],
+              borderColor: "rgba(255, 99, 132, 1)",
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              borderWidth: 2,
+              fill: true,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "top" },
+            title: {
+              display: true,
+              text: "Revenus et Dépenses Attendus (2024-2028)",
+              color: "white"
+            },
+          },
+          scales: {
+            y: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255,255,255,0.1)" }
+            },
+            x: {
+              ticks: { color: "white" },
+              grid: { color: "rgba(255,255,255,0.1)" }
+            }
+          }
+        },
+      });
+    }
+
+    // Graphique de la marge de pertes possible
+    const lossMarginCtx = document.getElementById("lossMarginChart")?.getContext("2d");
+    if (lossMarginCtx) {
+      lossMarginChartRef.current = new Chart(lossMarginCtx, {
+        type: "bar",
+        data: {
+          labels: ["2024", "2025", "2026", "2027", "2028"],
+          datasets: [
+            {
+              label: "Marge de Pertes",
+              data: [50000, 45000, 40000, 35000, 30000],
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              borderColor: "rgba(255, 99, 132, 1)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "top" },
+            title: {
+              display: true,
+              text: "Marge de Pertes Possible (2024-2028)",
               color: "white"
             },
           },
@@ -252,6 +344,12 @@ const Investor = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gray-800 rounded-xl shadow-lg p-6">
                 <canvas id="revenueChart"></canvas>
+              </div>
+              <div className="bg-gray-800 rounded-xl shadow-lg p-6">
+                <canvas id="expectedChart"></canvas>
+              </div>
+              <div className="bg-gray-800 rounded-xl shadow-lg p-6">
+                <canvas id="lossMarginChart"></canvas>
               </div>
               <div className="bg-gray-800 rounded-xl shadow-lg p-6">
                 <canvas id="portfolioChart"></canvas>
